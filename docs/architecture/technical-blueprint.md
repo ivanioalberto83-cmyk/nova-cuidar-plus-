@@ -50,6 +50,7 @@ The following migrations are committed to `feature/nova-cuidar-core-foundation` 
 - `supabase/migrations/202611220002_nova_core_security_hardening.sql`
 - `supabase/migrations/202611220003_nova_core_client_privilege_restrictions.sql`
 - `supabase/migrations/202611220004_nova_register_child_rpc.sql`
+- `supabase/migrations/202611220005_nova_child_registration_hold.sql`
 
 Tables created:
 - `nova_profiles`
@@ -87,9 +88,9 @@ Verified after migration:
 - RLS is enabled on all seven tables.
 - No table grants SELECT access to `anon`.
 - `nova_audit_events` has no client SELECT grant.
-- Four migrations are recorded in the hosted database.
-- The `nova_register_child` function is `SECURITY INVOKER`; execution is denied to `anon` and granted to `authenticated` only.
-- Supabase Security Advisor returned no findings after the child-registration RPC migration.
+- Five migrations are recorded in the hosted database.
+- The `nova_register_child` function is `SECURITY INVOKER`; execution is currently revoked from `anon`, `authenticated` and `public` pending approval of the privacy notice and consent wording.
+- Supabase Security Advisor returned no findings after the registration-hold migration.
 - Column-level privilege checks confirm profile status, organization status, child ownership and consent status are not client-writable.
 - Supabase Security Advisor returned no findings after the hardening migration.
 - Performance Advisor returned only informational unused-index notices; these are expected on a newly created database with no application traffic.
@@ -99,8 +100,8 @@ Application foundation committed (not yet built or runtime-tested):
 - Supabase SSR browser/server clients and request proxy using cookie-based sessions.
 - Email/password sign-up, sign-in, email callback, password recovery and password update flows.
 - Protected family area with server-side `getUser()` verification and RLS-scoped child listing.
-- Child registration form is disabled by default with `NOVA_ENABLE_CHILD_REGISTRATION=false` until privacy notice and terms are approved.
-- Atomic child/guardian/consent workflow through the invoker RPC.
+- Child registration form is disabled by default with `NOVA_ENABLE_CHILD_REGISTRATION=false`.
+- The atomic child/guardian/consent invoker RPC is present but its EXECUTE permission is revoked for all API roles until privacy notice and consent wording are approved.
 
 Not yet verified or implemented:
 - End-to-end RLS tests with real authenticated test accounts.
