@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { saveProviderProfile, signOut } from "@/app/actions";
+import { createProviderOrganization, saveProviderProfile, signOut } from "@/app/actions";
 import { createClient } from "@/lib/supabase/server";
 
-type Props = { searchParams: Promise<{ error?: string }> };
+type Props = { searchParams: Promise<{ error?: string; notice?: string }> };
 const provinces = ["Bengo","Benguela","Bié","Cabinda","Cuando","Cuanza Norte","Cuanza Sul","Cubango","Cunene","Huambo","Huíla","Icolo e Bengo","Luanda","Lunda Norte","Lunda Sul","Malanje","Moxico","Moxico Leste","Namibe","Uíge","Zaire"];
 export default async function ProviderRegisterPage({ searchParams }: Props) {
   const params = await searchParams;
@@ -15,6 +15,8 @@ export default async function ProviderRegisterPage({ searchParams }: Props) {
   const { data: organizations } = ids.length ? await supabase.from("nova_organizations").select("id,display_name").in("id", ids) : { data: [] as {id:string;display_name:string}[] };
   const errors: Record<string,string> = {
     validation:"Verifique os campos obrigatórios e os limites indicados.",
+    "organization-validation":"Indique o nome da organização e o tipo correcto.",
+    "organization-save":"Não foi possível criar a organização. Confirme os dados e tente novamente.",
     experience:"Descreva pelo menos 20 caracteres de experiência profissional.",
     selection:"Seleccione pelo menos um serviço e uma província válida.",
     duplicate:"Já existe um perfil prestador associado a esta conta.",
@@ -26,6 +28,8 @@ export default async function ProviderRegisterPage({ searchParams }: Props) {
       <span className="eyebrow">Área de prestadores</span><h1>Registar prestador</h1>
       <p className="muted">Crie um perfil profissional. O perfil ficará privado e pendente até à verificação administrativa.</p>
       {params.error && <div className="notice error">{errors[params.error] ?? "Não foi possível concluir o registo."}</div>}
+      {params.notice === "organization-created" && <div className="notice">Organização criada com estado pendente. A sua conta ficou associada como responsável inicial. Pode agora submeter o perfil para análise.</div>}
+      <section className="panel provider-org-panel"><h2>Registar uma organização</h2><p className="muted">Para empresas, associações, escolas, clínicas ou agências que prestam serviços de cuidado infantil. A organização ficará pendente de verificação.</p><form className="form" action={createProviderOrganization}><div className="field"><label htmlFor="organizationDisplayName">Nome público da organização</label><input id="organizationDisplayName" name="organizationDisplayName" minLength={2} maxLength={160} required /></div><div className="field"><label htmlFor="legalName">Denominação legal (opcional)</label><input id="legalName" name="legalName" maxLength={200} /></div><div className="field"><label htmlFor="organizationType">Categoria</label><select id="organizationType" name="organizationType" defaultValue="care_provider" required><option value="care_provider">Prestador de cuidados</option><option value="school">Escola</option><option value="clinic">Clínica</option><option value="agency">Agência</option><option value="other">Outra</option></select></div><button className="button secondary" type="submit">Criar organização e associar-me como responsável</button></form></section>
       <form className="form" action={saveProviderProfile}>
         <div className="field"><label htmlFor="providerType">Tipo de prestador</label><select id="providerType" name="providerType" required defaultValue="individual"><option value="individual">Cuidador individual</option><option value="organization" disabled={!organizations?.length}>Organização prestadora{!organizations?.length ? " — ainda sem organização associada" : ""}</option></select></div>
         <div className="field"><label htmlFor="publicName">Nome profissional ou nome da organização</label><input id="publicName" name="publicName" minLength={2} maxLength={160} required /></div>
