@@ -20,10 +20,11 @@
 - Recuperação e actualização de palavra-passe.
 - Área familiar protegida por verificação server-side.
 - Listagem de crianças autorizadas.
-- Função SQL atómica para criar criança, relação do responsável e consentimentos.
+- Função SQL atómica preparada para criar criança, relação do responsável e consentimentos; a execução está revogada até aprovação da documentação de privacidade.
 
 ## Salvaguardas antes de dados reais
 - A criação de registos de crianças está desactivada por omissão: `NOVA_ENABLE_CHILD_REGISTRATION=false`.
+- A permissão EXECUTE da função RPC também está revogada no Supabase para `anon`, `authenticated` e `public`; activar apenas depois de rever e aprovar aviso/termos.
 - Não activar até aprovar o aviso de privacidade, os termos, a identidade/contacto do responsável pelo tratamento e o fluxo de consentimento aplicável.
 - Usar apenas contas e dados fictícios nos primeiros testes.
 - Configurar SMTP de produção e URLs de redireccionamento no Supabase Auth.
