@@ -48,6 +48,7 @@ The following migrations are committed to `feature/nova-cuidar-core-foundation` 
 
 - `supabase/migrations/202611220001_nova_core_foundation.sql`
 - `supabase/migrations/202611220002_nova_core_security_hardening.sql`
+- `supabase/migrations/202611220003_nova_core_client_privilege_restrictions.sql`
 
 Tables created:
 - `nova_profiles`
@@ -60,7 +61,7 @@ Tables created:
 
 All seven tables have Row Level Security enabled. Explicit table grants are used; anonymous access is not granted. Authenticated access is granted only where the initial workflows require it. Audit events are withheld from client access and reserved for trusted server-side processes.
 
-The guardian-child access model is relationship-based. Child records are visible to their creator or an active linked guardian. The initial guardian link can only be created by the authenticated creator of the child. Additional guardian invitations and organization membership administration must be handled through trusted server-side workflows; clients cannot assign their own organization roles.
+The guardian-child access model is relationship-based. Child records are visible to their creator or an active linked guardian. The initial guardian link can only be created by the authenticated creator of the child. Additional guardian invitations and organization membership administration must be handled through trusted server-side workflows; clients cannot assign their own organization roles. Client column privileges are restricted so users cannot self-activate profiles, activate organizations, change ownership identifiers, or modify consent status.
 
 Consent records are append-only from the client in this foundation. Client insertion is limited to a currently linked guardian granting consent. Revocation and administrative corrections require a trusted server-side workflow and a separately reviewed migration/API.
 
@@ -85,7 +86,8 @@ Verified after migration:
 - RLS is enabled on all seven tables.
 - No table grants SELECT access to `anon`.
 - `nova_audit_events` has no client SELECT grant.
-- Two migrations are recorded in the hosted database.
+- Three migrations are recorded in the hosted database.
+- Column-level privilege checks confirm profile status, organization status, child ownership and consent status are not client-writable.
 - Supabase Security Advisor returned no findings after the hardening migration.
 - Performance Advisor returned only informational unused-index notices; these are expected on a newly created database with no application traffic.
 
