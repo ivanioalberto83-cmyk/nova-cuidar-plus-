@@ -3,7 +3,7 @@ export default function HomePage() {
   return <>
     <header className="shell site-header">
       <Link className="brand" href="/"><span className="brand-mark">+</span><span>NOVA CUIDAR+</span></Link>
-      <nav className="nav"><Link href="/login">Entrar</Link><Link className="button" href="/registar">Criar conta</Link></nav>
+      <nav className="nav"><Link href="/login">Entrar</Link><Link href="/prestador">Sou prestador</Link><Link className="button" href="/registar">Criar conta</Link></nav>
     </header>
     <main className="shell">
       <section className="hero">
