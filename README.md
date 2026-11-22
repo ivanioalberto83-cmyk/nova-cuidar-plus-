@@ -1,19 +1,21 @@
 # NOVA CUIDAR+
 
-Plataforma independente de assistência infantil, apoio escolar e serviços clínicos ao domicílio em Angola.
+Plataforma independente de cuidado infantil para Angola, destinada a famílias, cuidadores individuais e organizações prestadoras de serviços.
 
-A NOVA CUIDAR+ pretende ligar famílias e responsáveis a cuidadores e prestadores individuais ou empresariais, com cobertura nacional e um modelo de pagamentos híbrido.
+## Estado
+- Projecto Supabase exclusivo criado.
+- Fundação de dados NOVA CORE aplicada e verificada.
+- Aplicação Next.js iniciada com autenticação por email, callback PKCE, recuperação de palavra-passe e área familiar.
+- Registo de crianças preparado com função SQL atómica e consentimentos, mas desactivado por omissão até aprovação do aviso de privacidade e termos.
+- Ainda não publicada nem validada em ambiente de produção.
 
-## Fundação técnica
+## Documentação
+- [Blueprint técnico](docs/architecture/technical-blueprint.md)
+- [Execução local e configuração](docs/setup/local-development.md)
 
-A primeira etapa é o **NOVA CORE**, responsável por autenticação, perfis, organizações, permissões, relações entre responsáveis e crianças, consentimentos e auditoria.
+## Supabase
+- Project ref: `jzzctsmpvprqpmvuemli`
+- Project URL: `https://jzzctsmpvprqpmvuemli.supabase.co`
+- Região: `eu-west-1`
 
-A arquitectura técnica proposta e as fases de implementação estão documentadas em [docs/architecture/technical-blueprint.md](docs/architecture/technical-blueprint.md).
-
-## Estado do projecto
-
-- Planeamento técnico inicial registado.
-- Aplicação e módulos funcionais ainda não implementados.
-- Integração Supabase e deployment ainda não configurados.
-- Nenhuma chave ou credencial deve ser adicionada ao repositório.
-
+Nunca colocar chaves secret/service_role no GitHub, no browser ou em variáveis `NEXT_PUBLIC_*`.
