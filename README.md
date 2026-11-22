@@ -6,8 +6,9 @@ Plataforma independente de cuidado infantil para Angola, destinada a famílias, 
 - Projecto Supabase exclusivo criado.
 - Fundação de dados NOVA CORE aplicada e verificada.
 - Aplicação Next.js iniciada com autenticação por email, callback PKCE, recuperação de palavra-passe e área familiar.
-- Registo de crianças preparado com função SQL atómica e consentimentos, mas desactivado por omissão até aprovação do aviso de privacidade e termos.
-- Ainda não publicada nem validada em ambiente de produção.
+- Registo de crianças preparado com função SQL atómica, mas bloqueado na interface e na base de dados até aprovação do aviso de privacidade e dos termos.
+- Código ainda não instalado, compilado ou testado em ambiente local/CI.
+- Ainda não publicado nem validado em produção.
 
 ## Documentação
 - [Blueprint técnico](docs/architecture/technical-blueprint.md)
