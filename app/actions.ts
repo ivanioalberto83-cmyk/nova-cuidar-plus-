@@ -116,3 +116,24 @@ export async function saveProviderProfile(formData: FormData) {
   if (error) redirect(error.code === "23505" ? "/prestador/registar?error=duplicate" : "/prestador/registar?error=save");
   redirect("/prestador?notice=submitted");
 }
+
+export async function createProviderOrganization(formData: FormData) {
+  const legalName = value(formData, "legalName");
+  const displayName = value(formData, "organizationDisplayName");
+  const organizationType = value(formData, "organizationType");
+  const allowedTypes = ["care_provider", "school", "clinic", "agency", "other"];
+  if (displayName.length < 2 || displayName.length > 160 ||
+      legalName.length > 200 || !allowedTypes.includes(organizationType)) {
+    redirect("/prestador/registar?error=organization-validation");
+  }
+  const supabase = await createClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
+  const { data, error } = await supabase.rpc("nova_create_provider_organization", {
+    p_legal_name: legalName || null,
+    p_display_name: displayName,
+    p_organization_type: organizationType
+  });
+  if (error || !data) redirect("/prestador/registar?error=organization-save");
+  redirect("/prestador/registar?notice=organization-created");
+}
