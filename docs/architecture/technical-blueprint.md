@@ -49,6 +49,7 @@ The following migrations are committed to `feature/nova-cuidar-core-foundation` 
 - `supabase/migrations/202611220001_nova_core_foundation.sql`
 - `supabase/migrations/202611220002_nova_core_security_hardening.sql`
 - `supabase/migrations/202611220003_nova_core_client_privilege_restrictions.sql`
+- `supabase/migrations/202611220004_nova_register_child_rpc.sql`
 
 Tables created:
 - `nova_profiles`
@@ -86,18 +87,29 @@ Verified after migration:
 - RLS is enabled on all seven tables.
 - No table grants SELECT access to `anon`.
 - `nova_audit_events` has no client SELECT grant.
-- Three migrations are recorded in the hosted database.
+- Four migrations are recorded in the hosted database.
+- The `nova_register_child` function is `SECURITY INVOKER`; execution is denied to `anon` and granted to `authenticated` only.
+- Supabase Security Advisor returned no findings after the child-registration RPC migration.
 - Column-level privilege checks confirm profile status, organization status, child ownership and consent status are not client-writable.
 - Supabase Security Advisor returned no findings after the hardening migration.
 - Performance Advisor returned only informational unused-index notices; these are expected on a newly created database with no application traffic.
 
+Application foundation committed (not yet built or runtime-tested):
+- Next.js 16 App Router and TypeScript project scaffold.
+- Supabase SSR browser/server clients and request proxy using cookie-based sessions.
+- Email/password sign-up, sign-in, email callback, password recovery and password update flows.
+- Protected family area with server-side `getUser()` verification and RLS-scoped child listing.
+- Child registration form is disabled by default with `NOVA_ENABLE_CHILD_REGISTRATION=false` until privacy notice and terms are approved.
+- Atomic child/guardian/consent workflow through the invoker RPC.
+
 Not yet verified or implemented:
 - End-to-end RLS tests with real authenticated test accounts.
+- Runtime build/typecheck; the repository files have not yet been installed and executed in a local environment.
 - Auth signup, email confirmation, password recovery and production SMTP configuration.
 - Trusted server-side workflows for organization membership, additional guardian invitations and consent revocation.
 - Private Storage buckets and upload/download policies.
 - Provider, services, scheduling and payment modules.
-- Application frontend, deployment, monitoring, backup/export and restore testing.
+- Application deployment, monitoring, backup/export and restore testing.
 
 ## Operational constraints
 
