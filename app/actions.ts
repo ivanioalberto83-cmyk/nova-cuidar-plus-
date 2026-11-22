@@ -82,3 +82,37 @@ export async function registerChild(formData: FormData) {
   if (error) redirect("/familia?error=child-save");
   redirect("/familia?notice=child-created");
 }
+
+export async function saveProviderProfile(formData: FormData) {
+  const providerType = value(formData, "providerType");
+  const publicName = value(formData, "publicName");
+  const qualificationPath = value(formData, "qualificationPath");
+  const yearsRaw = value(formData, "yearsExperience");
+  const experienceSummary = value(formData, "experienceSummary");
+  const professionalSummary = value(formData, "professionalSummary");
+  const organizationId = value(formData, "organizationId");
+  const services = formData.getAll("serviceCategories").map(String).filter(Boolean);
+  const provinces = formData.getAll("provinces").map(String).filter(Boolean);
+  if (!["individual", "organization"].includes(providerType) || publicName.length < 2 || publicName.length > 160 ||
+      !["certified", "experience_based", "both"].includes(qualificationPath) ||
+      professionalSummary.length > 2000 || experienceSummary.length > 2000 ||
+      (providerType === "organization" && !organizationId)) redirect("/prestador/registar?error=validation");
+  const years = yearsRaw ? Number(yearsRaw) : null;
+  if (years !== null && (!Number.isInteger(years) || years < 0 || years > 60)) redirect("/prestador/registar?error=validation");
+  if ((qualificationPath === "experience_based" || qualificationPath === "both") && experienceSummary.length < 20) redirect("/prestador/registar?error=experience");
+  const allowedServices = ["acompanhamento_infantil", "apoio_escolar", "cuidados_domicilio", "apoio_necessidades_especiais"];
+  const allowedProvinces = ["Bengo","Benguela","Bie","Cabinda","Cuando","Cuanza Norte","Cuanza Sul","Cubango","Cunene","Huambo","Huila","Icolo e Bengo","Luanda","Lunda Norte","Lunda Sul","Malanje","Moxico","Moxico Leste","Namibe","Uige","Zaire"];
+  if (services.length === 0 || services.some(item => !allowedServices.includes(item)) || provinces.length === 0 || provinces.some(item => !allowedProvinces.includes(item))) redirect("/prestador/registar?error=selection");
+  const supabase = await createClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) redirect("/login");
+  const payload = {
+    owner_user_id: user.id, provider_type: providerType, organization_id: providerType === "organization" ? organizationId : null,
+    public_name: publicName, professional_summary: professionalSummary || null,
+    qualification_path: qualificationPath, years_experience: years,
+    experience_summary: experienceSummary || null, service_categories: services, provinces
+  };
+  const { error } = await supabase.from("nova_provider_profiles").insert(payload);
+  if (error) redirect(error.code === "23505" ? "/prestador/registar?error=duplicate" : "/prestador/registar?error=save");
+  redirect("/prestador?notice=submitted");
+}
